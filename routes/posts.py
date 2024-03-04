@@ -15,13 +15,3 @@ async def get_posts(author: str = None, category: str = None):
     posts = await query.values('id', 'title', 'content','category', 'author__username')
     return posts
 
-
-@router.post("/posts")
-async def create_post(post_in: PostIn):
-    post = await Post.create(
-        title=post_in.title,
-        cofntent=post_in.content,
-        category= post_in.category,
-        author_id=post_in.author_id,
-        )
-    return post
