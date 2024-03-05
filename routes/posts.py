@@ -15,3 +15,4 @@ async def get_posts(author: str = None, category: str = None):
     posts = await query.values('id', 'title', 'content','category', 'author__username')
     return posts
 
+

@@ -1,24 +1,25 @@
+
 from fastapi import FastAPI
+from tortoise import Tortoise, run_async
 from routes import users, posts
 from tortoise.contrib.fastapi import register_tortoise
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+TORTOISE_ORM = {
+    "connections": {
+        "default": "sqlite://db.sqlite3",
+    },
+    "apps": {
+        "models": {
+            "models": ["models"],
+            "default_connection": "default",
+        }
+    },
+}
 
-# add routers
-app.include_router(users.router)
-app.include_router(posts.router)
-
-
+Tortoise.init(config=TORTOISE_ORM)
 
 register_tortoise(
     app,
@@ -28,6 +29,10 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
+app.include_router(users.router)
+app.include_router(posts.router)
+
+
+
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    run_async(app)
